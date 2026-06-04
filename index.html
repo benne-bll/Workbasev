@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Workbase</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="screens">
+    <div id="s-d" class="scr act"></div>
+    <div id="s-k" class="scr"></div>
+    <div id="s-p" class="scr"></div>
+    <div id="s-a" class="scr"></div>
+    <div id="s-r" class="scr"></div>
+    <div id="s-kat" class="scr"></div>
+    <div id="s-am" class="scr"></div>
+  <div id="s-n" class="scr"></div>
+    <div id="s-ang-edit" class="scr"></div>
+  <div id="s-rech-edit" class="scr"></div>
+  <div id="s-zeit" class="scr"></div>
+  <div id="s-mat"  class="scr"></div>
+  <div id="s-ger"  class="scr"></div>
+  <div id="s-txt"  class="scr"></div>
+  <div id="s-set" class="scr"></div>
+    <div id="s-mehr" class="scr"></div>
+  </div>
+  <nav id="nav">
+    <button class="nb on" data-s="d">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Heute
+    </button>
+    <button class="nb" data-s="k">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Kunden
+    </button>
+    <button class="nb" data-s="p">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Projekte
+    </button>
+    <button class="nb" data-s="r">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Abrechnung
+    </button>
+    <button class="nb" data-s="mehr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      Mehr
+    </button>
+  </nav>
+
+  <!-- FAB - Floating Action Button -->
+
+<button class="fab fab-hidden" id="fabBtn" title="Neu erstellen">+</button>
+
+  <!-- Theme Toggle -->
+
+<button class="theme-toggle" id="themeToggleBtn" title="Hell/Dunkel">☾</button>
+
+  <!-- PDF Modal (Slide-up) -->
+
+  <div id="pdf-modal">
+    <div id="pdf-modal-bar">
+      <button id="pdf-modal-back">&#8592; Zurueck</button>
+      <h3 id="pdf-modal-title">PDF Vorschau</h3>
+      <button id="pdf-modal-print">&#128438; Drucken</button>
+    </div>
+    <iframe id="pdf-modal-frame" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+  </div>
+
+  <!-- Onboarding -->
+
+  <div id="onboarding" style="display:none">
+    <div class="ob-logo">&#127775;</div>
+    <h1>Willkommen bei<br>Workbase</h1>
+    <p>Die professionelle App fuer<br>Maler und Trockenbauer.</p>
+    <div class="ob-field">
+      <label>Dein Firmenname</label>
+      <input id="ob-firma" type="text" placeholder="z.B. Malermeister Mustermann" autocomplete="organization">
+    </div>
+    <div class="ob-field">
+      <label>Dein Name</label>
+      <input id="ob-inhaber" type="text" placeholder="z.B. Max Mustermann" autocomplete="name">
+    </div>
+    <button class="ob-btn" id="ob-start">Los geht's &rarr;</button>
+    <div class="ob-skip" id="ob-skip">Ueberspringen</div>
+  </div>
+
+</div>
+
+<!-- SYNC INDICATOR -->
+
+<div id="sync-indicator"></div>
+
+<!-- PIN LOGIN SCREEN -->
+
+<div id="pin-screen">
+  <div class="pin-logo">&#128296;</div>
+  <h1>Workbase</h1>
+  <p>PIN eingeben um fortzufahren</p>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-key" data-pk="1">1</button>
+    <button class="pin-key" data-pk="2">2</button>
+    <button class="pin-key" data-pk="3">3</button>
+    <button class="pin-key" data-pk="4">4</button>
+    <button class="pin-key" data-pk="5">5</button>
+    <button class="pin-key" data-pk="6">6</button>
+    <button class="pin-key" data-pk="7">7</button>
+    <button class="pin-key" data-pk="8">8</button>
+    <button class="pin-key" data-pk="9">9</button>
+    <button class="pin-key" style="visibility:hidden" disabled></button>
+    <button class="pin-key" data-pk="0">0</button>
+    <button class="pin-key del" id="pin-del">&#9003;</button>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+  <div class="pin-sync" id="pin-sync-msg"></div>
+</div>
+
+<!-- MODAL KUNDE -->
+
+<div id="m-k" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2 id="m-k-t">Neuer Kunde</h2>
+  <div class="row">
+    <div class="fg"><label>Vorname *</label><input id="kVN" type="text" autocomplete="given-name" placeholder="Max"></div>
+    <div class="fg"><label>Nachname *</label><input id="kNN" type="text" autocomplete="family-name" placeholder="Muster"></div>
+  </div>
+  <div class="fg"><label>Strasse</label><input id="kStr" type="text" placeholder="Musterstr. 1" autocomplete="off"></div>
+  <div class="row">
+    <div class="fg" style="flex:0 0 90px"><label>PLZ</label><input id="kPLZ" type="text" inputmode="numeric" maxlength="5" placeholder="80333"></div>
+    <div class="fg"><label>Ort</label><input id="kOrt" type="text" placeholder="Muenchen" autocomplete="off"></div>
+  </div>
+  <div class="fg"><label>Telefon</label><input id="kTel" type="tel" autocomplete="tel" placeholder="0170 1234567"></div>
+  <div class="fg"><label>E-Mail</label><input id="kMail" type="email" autocomplete="email" placeholder="max@mail.de"></div>
+  <div class="fg"><label>Notiz</label><textarea id="kNote" placeholder="Weitere Infos..."></textarea></div>
+  <input type="hidden" id="kId">
+  <div class="row" style="margin-top:8px">
+    <button class="btn bg2" id="kCan">Abbrechen</button>
+    <button class="btn bp" id="kSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL PROJEKT -->
+
+<div id="m-p" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2 id="m-p-t">Neues Projekt</h2>
+  <div class="fg"><label>Projektname *</label><input id="pNm" type="text" autocomplete="off" placeholder="Renovierung EG"></div>
+  <div class="fg"><label>Kunde *</label><select id="pKun"></select></div>
+  <div class="fg"><label>Beschreibung</label><textarea id="pDesc" placeholder="Beschreibung..."></textarea></div>
+  <input type="hidden" id="pId">
+  <div class="div"></div>
+  <div class="sec" style="margin-top:0">Raeume / Aufmass</div>
+  <div id="raumL"></div>
+  <div class="raumz">
+    <input id="rNm" type="text" placeholder="Raum" style="flex:2">
+    <input id="rBr" type="number" placeholder="B m" min="0" step="0.1" style="flex:1">
+    <input id="rHo" type="number" placeholder="H m" min="0" step="0.1" style="flex:1">
+    <button class="btn bp bsm" id="rAdd" style="flex:none;padding:10px 14px;font-size:18px">+</button>
+  </div>
+  <div id="rTotBox" class="ibox" style="display:none">Gesamt: <strong id="rTotV">0</strong> m2</div>
+  <div class="row" style="margin-top:8px">
+    <button class="btn bg2" id="pCan">Abbrechen</button>
+    <button class="btn bp" id="pSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL ANGEBOT -->
+
+<div id="m-a" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2>Neues Angebot</h2>
+  <div class="fg"><label>Projekt *</label><select id="aPrj"></select></div>
+  <div id="aFlBox" class="ibox" style="display:none">Flaeche: <strong id="aFlV">0</strong> m2</div>
+  <button class="btn bo bsm" id="aKatB" style="margin-bottom:10px;width:auto">+ Aus Katalog</button>
+  <div id="aKatL" style="display:none;margin-bottom:10px;max-height:220px;overflow-y:auto"></div>
+  <div class="div"></div>
+  <div class="sec" style="margin-top:0">Leistungen</div>
+  <div id="aLL"></div>
+  <div id="aKatI"></div>
+  <div class="div"></div>
+  <div class="sec">Summe</div>
+  <div class="sbox">
+    <div class="sr"><span>Netto</span><span id="aNt">0,00 EUR</span></div>
+    <div class="sr"><span id="aMwLbl">MwSt. 19%</span><span id="aMw">0,00 EUR</span></div>
+    <div class="sr stot"><span>Brutto</span><span id="aBr">0,00 EUR</span></div>
+  </div>
+  <div class="stgl" id="aNotToggle"><span class="arr">&#9654;</span><span style="font-size:13px;font-weight:600;color:var(--mut)">Interne Notiz</span></div>
+  <div class="stgl-body" id="aNotBody"><div class="fg"><textarea id="aNotTxt" placeholder="Interne Anmerkung..."></textarea></div></div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn bg2" id="aCan">Abbrechen</button>
+    <button class="btn bg2 bsm" id="aPrevBtn" style="flex:none;padding:12px 14px">Vorschau</button>
+    <button class="btn bp" id="aSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL RECHNUNG -->
+
+<div id="m-r" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2>Neue Rechnung</h2>
+  <div class="fg"><label>Typ</label>
+    <select id="rTyp">
+      <option value="schluss">Schlussrechnung</option>
+      <option value="abschlag">Abschlagsrechnung</option>
+      <option value="teil">Teilrechnung</option>
+      <option value="voraus">Vorauszahlung</option>
+    </select>
+  </div>
+  <div id="rAbPRow" class="fg" style="display:none"><label>Abschlag %</label><input id="rAbP" type="number" min="1" max="100" value="30"></div>
+  <div class="fg"><label>Projekt *</label><select id="rPrj"></select></div>
+  <div id="rFlBox" class="ibox" style="display:none">Flaeche: <strong id="rFlV">0</strong> m2</div>
+  <div class="row">
+    <div class="fg"><label>Zeitraum von</label><input id="rVon" type="date"></div>
+    <div class="fg"><label>bis</label><input id="rBis" type="date"></div>
+  </div>
+  <div class="div"></div>
+  <div class="sec" style="margin-top:0">Leistungen</div>
+  <div id="rLL"></div>
+  <div class="div"></div>
+  <div class="sec">Summe</div>
+  <div class="sbox">
+    <div class="sr"><span>Netto</span><span id="rNt">0,00 EUR</span></div>
+    <div class="sr"><span id="rMwLbl">MwSt. 19%</span><span id="rMw">0,00 EUR</span></div>
+    <div id="rAbRow" class="sr" style="display:none"><span id="rAbLbl">Abschlag 30%</span><span id="rAbVal">0,00 EUR</span></div>
+    <div class="sr stot"><span>Brutto</span><span id="rBr">0,00 EUR</span></div>
+  </div>
+  <div class="stgl" id="rExtToggle"><span class="arr">&#9654;</span><span style="font-size:13px;font-weight:600;color:var(--mut)">Zahlungskonditionen &amp; Status</span></div>
+  <div class="stgl-body" id="rExtBody">
+    <div class="row">
+      <div class="fg"><label>Zahlungsziel (Tage)</label><input id="rZiel" type="number" value="14" min="0"></div>
+      <div class="fg"><label>Status</label>
+        <select id="rStat">
+          <option value="offen">Offen</option>
+          <option value="versendet">Versendet</option>
+          <option value="gemahnt">Gemahnt</option>
+          <option value="bezahlt">Bezahlt</option>
+          <option value="storniert">Storniert</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="fg"><label>Skonto %</label><input id="rSkoP" type="number" value="2" min="0" step="0.5"></div>
+      <div class="fg"><label>Skonto bei (Tage)</label><input id="rSkoT" type="number" value="7" min="0"></div>
+    </div>
+    <div class="fg"><label>Interne Notiz</label><textarea id="rNotTxt" placeholder="Interne Anmerkung..."></textarea></div>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn bg2" id="rCan">Abbrechen</button>
+    <button class="btn bg2 bsm" id="rPrevBtn" style="flex:none;padding:12px 14px">Vorschau</button>
+    <button class="btn bp" id="rSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL NOTIZ -->
+
+<div id="m-n" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2 id="m-n-t">Neue Notiz</h2>
+  <div class="fg"><label>Titel</label><input id="nTit" type="text" autocomplete="off" placeholder="Baustelle Hinweis"></div>
+  <div class="fg"><label>Text *</label><textarea id="nTxt" style="height:100px" placeholder="Notiz..."></textarea></div>
+  <div class="fg"><label>Foto</label><input id="nFil" type="file" accept="image/*" capture="environment"></div>
+  <div id="nImgWrap" class="ipw" style="display:none">
+    <img id="nImgPrv" src="" alt="">
+    <button id="nImgRm" class="xb">x</button>
+  </div>
+  <input type="hidden" id="nId">
+  <input type="hidden" id="nImgData">
+  <div class="row" style="margin-top:8px">
+    <button class="btn bg2" id="nCan">Abbrechen</button>
+    <button class="btn bp" id="nSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL KATALOG ITEM -->
+
+<div id="m-ki" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2 id="m-ki-t">Neue Leistung</h2>
+  <div class="fg"><label>Kategorie</label>
+    <select id="kiKat">
+      <option value="maler">Malerarbeiten</option>
+      <option value="trockenbau">Trockenbauarbeiten</option>
+      <option value="putz">Putz und Stuck</option>
+      <option value="sonst">Sonstiges</option>
+    </select>
+  </div>
+  <div class="fg"><label>Bezeichnung *</label><input id="kiNm" type="text" autocomplete="off" placeholder="z.B. Waende 2x streichen"></div>
+  <div class="fg"><label>Beschreibung</label><textarea id="kiTx" style="height:80px" placeholder="Leistungsbeschreibung..."></textarea></div>
+  <div class="row">
+    <div class="fg"><label>Einheit</label>
+      <select id="kiEi">
+        <option value="m2">m2</option><option value="lfm">lfm</option>
+        <option value="Stk">Stk.</option><option value="psch">psch.</option><option value="h">h</option>
+      </select>
+    </div>
+    <div class="fg"><label>EP netto (EUR)</label><input id="kiPr" type="number" min="0" step="0.01" placeholder="0.00"></div>
+  </div>
+  <input type="hidden" id="kiId">
+  <div class="row" style="margin-top:10px">
+    <button class="btn bg2" id="kiCan">Abbrechen</button>
+    <button class="btn bp" id="kiSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL AUFMASS POSITION -->
+
+<div id="m-am" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2 id="m-am-t">Neue Aufmassposition</h2>
+  <div class="fg"><label>Bezeichnung</label><input id="amBez" type="text" autocomplete="off" placeholder="z.B. Wand Nord"></div>
+  <div class="fg"><label>Projekt</label><select id="amProj"></select></div>
+  <div class="fg"><label>Formel</label>
+    <select id="amFormel">
+      <option value="rechteck">Rechteck (B x H)</option>
+      <option value="dreieck">Dreieck (B x H / 2)</option>
+      <option value="trapez">Trapez ((A+B)/2 x H)</option>
+      <option value="giebel">Giebel/Satteldach (B x H + B x S)</option>
+      <option value="kreis">Kreis (r2 x Pi)</option>
+      <option value="manuell">Manuell (direkte Eingabe)</option>
+    </select>
+  </div>
+  <div id="amInputs"></div>
+  <div class="fg"><label>Abzug m2 (Fenster/Tueren)</label><input id="amAbzug" type="number" min="0" step="0.01" value="0" placeholder="0.00"></div>
+  <div id="amErgebnis" class="ibox" style="display:none">
+    Ergebnis: <strong id="amM2">0.000</strong> m2 netto
+  </div>
+  <div class="fg"><label>Foto / Skizze</label><input id="amFil" type="file" accept="image/*" capture="environment"></div>
+  <div id="amImgWrap" class="ipw" style="display:none">
+    <img id="amImgPrv" src="" alt="">
+    <button id="amImgRm" class="xb">x</button>
+  </div>
+  <input type="hidden" id="amId">
+  <input type="hidden" id="amImgData">
+  <div class="row" style="margin-top:10px">
+    <button class="btn bg2" id="amCan">Abbrechen</button>
+    <button class="btn bp" id="amSav">Speichern</button>
+  </div>
+</div></div>
+
+<!-- MODAL VOB INFO -->
+
+<div id="m-vob" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2>VOB/C Regelungen</h2>
+  <div style="font-size:13px;line-height:1.8;color:var(--mut)">
+    <div class="sec" style="margin-top:0">DIN 18363 Malerarbeiten</div>
+    <div class="card">
+      <p>Oeffnungen &lt; 2,5 m2 werden nicht abgezogen.</p>
+      <p>Oeffnungen 2,5 - 4,0 m2: nur eine Seite anrechnen.</p>
+      <p>Oeffnungen &gt; 4,0 m2: beide Seiten abziehen.</p>
+    </div>
+    <div class="sec">DIN 18340 Trockenbauarbeiten</div>
+    <div class="card">
+      <p>Durchbrueche &lt; 0,5 m2 bleiben unberuecksichtigt.</p>
+      <p>Anschluesse an andere Bauteile gelten als abgegolten.</p>
+      <p>Oeffnungen werden in der Regel mitgemessen.</p>
+    </div>
+    <div class="sec">DIN 18350 Putz und Stuckateurarbeiten</div>
+    <div class="card">
+      <p>Nischen &lt; 0,1 m2 werden nicht berechnet.</p>
+      <p>Leibungen werden gesondert berechnet (lfm).</p>
+    </div>
+  </div>
+  <button class="btn bg2" id="vobCl" style="margin-top:12px">Schliessen</button>
+</div></div>
+
+<!-- MODAL: DIGITALE UNTERSCHRIFT -->
+
+<div id="m-sig" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2>Digitale Unterschrift</h2>
+  <p style="font-size:13px;color:var(--mut);margin-bottom:12px">Mit Finger oder Stift unterschreiben:</p>
+  <div style="border:2px solid var(--bdr);border-radius:10px;background:#fafafa;margin-bottom:10px;position:relative;min-height:160px">
+    <canvas id="sigCanvas" style="display:block;width:100%;height:160px;touch-action:none;cursor:crosshair;border-radius:8px"></canvas>
+    <div id="sigPh" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#cbd5e1;font-size:13px;pointer-events:none;white-space:nowrap">Hier unterschreiben...</div>
+  </div>
+  <div class="row" style="gap:8px;margin-bottom:12px">
+    <button class="btn bg2" id="sigClearBtn">Loeschen</button>
+    <button class="btn bp" id="sigSaveBtn">Unterschrift speichern</button>
+  </div>
+  <button class="btn bg2" id="sigCancelBtn">Abbrechen</button>
+</div></div>
+
+<!-- MODAL VORSCHAU -->
+
+<div id="m-prev" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2 style="margin:0">Vorschau</h2>
+    <button class="btn bp bsm" id="prevPrint">Drucken</button>
+  </div>
+  <div id="prevContent" class="prev-wrap"></div>
+  <button class="btn bg2" id="prevCl" style="margin-top:12px">Schliessen</button>
+</div></div>
+
+<!-- EINSTELLUNGEN MODAL -->
+
+<div id="m-set" class="mov"><div class="modal">
+  <div class="mh"></div>
+  <h2>Einstellungen</h2>
+  <div class="sec" style="margin-top:0">Steuer</div>
+  <div class="tog">
+    <div><div class="tl">Kleinunternehmer (Par. 19)</div><div class="ts">0% MwSt., Pflichthinweis im PDF</div></div>
+    <label class="sw-w"><input type="checkbox" id="setKU"><span class="sw-sl"></span></label>
+  </div>
+  <div class="sec">Firmendaten fuer PDF</div>
+  <div class="fg"><label>Firmenname</label><input id="setFirma" type="text" autocomplete="off"></div>
+  <div class="fg"><label>Inhabername</label><input id="setInhaber" type="text" autocomplete="off"></div>
+  <div class="fg"><label>Adresse</label><input id="setAdr" type="text" autocomplete="off"></div>
+  <div class="fg"><label>Telefon</label><input id="setTel" type="tel"></div>
+  <div class="fg"><label>E-Mail</label><input id="setMail" type="email"></div>
+  <div class="fg"><label>USt-IdNr.</label><input id="setUst" type="text" autocomplete="off"></div>
+  <div class="fg"><label>IBAN</label><input id="setIban" type="text" autocomplete="off"></div>
+  <div class="fg"><label>BIC</label><input id="setBic" type="text" autocomplete="off"></div>
+  <div class="row" style="margin-top:10px">
+    <button class="btn bg2" id="setCan">Schliessen</button>
+    <button class="btn bp" id="setSav">Speichern</button>
+  </div>
+
+  <!-- BACKUP & RESTORE -->
+
+  <div class="sec">Datensicherung</div>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+
+```
+<button class="btn" id="btnBackup" style="background:#1e3a5f;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border-radius:12px;font-size:15px;font-weight:600">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  Daten sichern (Backup)
+</button>
+
+<button class="btn" id="btnRestore" style="background:#263249;color:#94a3b8;border:1.5px solid #334155;display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border-radius:12px;font-size:15px;font-weight:600">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+  Daten wiederherstellen (Import)
+</button>
+
+<input type="file" id="restoreFileInput" accept=".json" style="display:none">
+<div id="backupStatus" style="font-size:12px;color:#64748b;text-align:center;min-height:16px"></div>
+```
+
+  </div>
+
+</div></div>
+
+<div id="toast"></div>
+
+<div id="am-tpl" style="display:none;position:absolute;visibility:hidden;pointer-events:none">
+<!-- ===================================================
+     SCREEN: LISTE
+     =================================================== -->
+<div id="sL">
+  <div class="ph">
+    <div class="ph-left">
+      <h1>Aufmass Pro</h1>
+      <div class="sub" id="lSub">VOB/C &middot; 0 Raeume</div>
+    </div>
+    <div class="usw">
+      <button id="btnM" class="on">m</button>
+      <button id="btnCM">cm</button>
+    </div>
+  </div>
+  <div class="body">
+    <div id="rcList"></div>
+    <button class="btn btn-p btn-full" id="btnNeu" style="margin-bottom:8px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Neuen Raum / Flaeche erfassen
+    </button>
+    <button class="btn btn-pur btn-full" id="btnPDF" style="display:none;margin-bottom:10px">
+     <button class="btn btn-full" id="btnZuAngebot" style="display:none;margin-bottom:10px;background:#22c55e;color:#fff">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+  Raeume ins Angebot uebernehmen
+</button>
+
+       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Aufmass-Bericht PDF
+    </button>
+    <div id="gesamtBox"></div>
+  </div>
+</div>
+
+<!-- ===================================================
+     SCREEN: FORMULAR
+     =================================================== -->
+
+<div id="sF" style="display:none">
+  <div class="ph">
+    <div class="ph-left">
+      <h1 id="fTitel">Neuer Raum</h1>
+      <div class="sub" id="fHint">Eingabe in Meter</div>
+    </div>
+    <button class="btn btn-sm btn-g" id="btnBack">&#8592; Zurueck</button>
+  </div>
+
+  <!-- FORTSCHRITTS-INDIKATOR -->
+
+  <div class="steps" id="stepsBar">
+    <div class="step active" data-step="0">
+      <div class="step-dot">1</div>
+      <div class="step-lbl">Basis</div>
+    </div>
+    <div class="step" data-step="1">
+      <div class="step-dot">2</div>
+      <div class="step-lbl">Masse</div>
+    </div>
+    <div class="step" data-step="2">
+      <div class="step-dot">3</div>
+      <div class="step-lbl">Foto</div>
+    </div>
+    <div class="step" data-step="3">
+      <div class="step-dot">4</div>
+      <div class="step-lbl">Abzuege</div>
+    </div>
+    <div class="step" data-step="4">
+      <div class="step-dot">5</div>
+      <div class="step-lbl">Ergebnis</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+```
+<!-- SCHRITT 1: BASIS -->
+<div class="sec" style="margin-top:4px">1. Bezeichnung &amp; Modus</div>
+<div class="card">
+  <div class="fg"><label>Name (Raum / Flaeche)</label>
+    <input id="fNm" type="text" placeholder="z.B. Wohnzimmer, Fassade Nord" autocomplete="off">
+  </div>
+  <div class="tabs">
+    <button class="tab on" data-mode="gesamt">&#9635; Raum</button>
+    <button class="tab" data-mode="wand">&#9707; Wand/Wand</button>
+    <button class="tab" data-mode="fassade">&#9968; Fassade</button>
+  </div>
+  <!-- VOB-Regelwahl -->
+  <div class="fg">
+    <label>VOB-Regelwerk</label>
+    <select id="fVob">
+      <option value="18363">DIN 18363 &ndash; Malerarbeiten (&le;2,5 m&sup2; kein Abzug)</option>
+      <option value="18345">DIN 18345 &ndash; WDVS / Fassade (&le;1,0 m&sup2; kein Abzug)</option>
+      <option value="18350">DIN 18350 &ndash; Putz &amp; Stuck (&le;0,1 m&sup2; kein Abzug)</option>
+    </select>
+  </div>
+</div>
+
+<!-- SCHRITT 2A: RAUM GESAMT -->
+<div id="modeGesamt">
+  <div class="sec">2. Raumabmessungen</div>
+  <div class="card">
+    <div class="row3">
+      <div class="fg"><label id="lL">Laenge (m)</label>
+        <input id="fL" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label id="lB">Breite (m)</label>
+        <input id="fB" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label id="lH">Hoehe (m)</label>
+        <input id="fH" type="number" min="0" step="any" placeholder="0"></div>
+    </div>
+    <div id="vorschau" class="ibox" style="display:none">
+      Wand: <strong id="pvW">0</strong> &bull;
+      Decke: <strong id="pvD">0</strong> &bull;
+      Boden: <strong id="pvB">0</strong> m&sup2;
+    </div>
+  </div>
+  <!-- Zusatzflaechen -->
+  <div class="sec">Zusatzflaechen (Nischen / Laibungen)</div>
+  <div id="zfListe"></div>
+  <div style="margin-bottom:10px">
+    <input id="zfNm" type="text" placeholder="Bezeichnung (optional)" style="width:100%;background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:16px;padding:12px 14px;outline:none;margin-bottom:8px">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr auto;gap:8px;align-items:center">
+      <input id="zfL" type="number" placeholder="Laenge" min="0" step="any" style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:14px 12px;outline:none;text-align:center;width:100%">
+      <span style="color:var(--mut);font-size:20px;font-weight:700;text-align:center">x</span>
+      <input id="zfH" type="number" placeholder="Hoehe" min="0" step="any" style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:14px 12px;outline:none;text-align:center;width:100%">
+      <button class="btn btn-o" id="btnZF" style="padding:0;width:52px;height:52px;font-size:26px;border-radius:var(--rs);flex-shrink:0">+</button>
+    </div>
+  </div>
+  <div id="zfSum" class="ibox" style="display:none">Zusatz: <strong id="zfSumV">0</strong> m&sup2;</div>
+  <!-- Dachschraege -->
+  <div class="div"></div>
+  <div class="tgl-hd" id="schTgl">
+    <span class="tgl-arr" id="schArr">&#9654;</span>
+    <span style="font-size:13px;font-weight:600;color:var(--mut)">Dachschraege / Giebelwand</span>
+  </div>
+  <div class="tgl-body" id="schBody">
+    <div class="wbox">Trapez: Breite &times; (H-links + H-rechts) / 2</div>
+    <div class="row3">
+      <div class="fg"><label id="lSB">Breite (m)</label><input id="sBr" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label id="lSL">H links (m)</label><input id="sHL" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label id="lSR">H rechts (m)</label><input id="sHR" type="number" min="0" step="any" placeholder="0"></div>
+    </div>
+    <div id="schVors" class="ibox" style="display:none">Giebelfl.: <strong id="schM2">0</strong> m&sup2; (addiert)</div>
+  </div>
+</div>
+
+<!-- SCHRITT 2B: WAND FUER WAND -->
+<div id="modeWand" style="display:none">
+  <div class="sec">2. Waende</div>
+  <div id="wandListe"></div>
+  <div style="margin-bottom:10px">
+    <input id="wNm" type="text" placeholder="Wandname (z.B. Nord, Sued)" style="width:100%;background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:16px;padding:12px 14px;outline:none;margin-bottom:8px">
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center">
+      <input id="wL" type="number" placeholder="Laenge" min="0" step="any" style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:14px 12px;outline:none;text-align:center;width:100%">
+      <input id="wH" type="number" placeholder="Hoehe" min="0" step="any" style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:14px 12px;outline:none;text-align:center;width:100%">
+      <button class="btn btn-p" id="btnAddWand" style="padding:0;width:52px;height:52px;font-size:26px;border-radius:var(--rs);flex-shrink:0">+</button>
+    </div>
+  </div>
+  <div class="fg">
+    <label id="lDecke" style="display:block;font-size:10px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Decke berechnen (optional)</label>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:8px">
+      <input id="deckL" type="number" min="0" step="any" placeholder="Laenge"
+        style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:13px 10px;outline:none;text-align:center;width:100%;-webkit-appearance:none">
+      <span style="color:var(--mut);font-size:20px;font-weight:700;flex-shrink:0">x</span>
+      <input id="deckB" type="number" min="0" step="any" placeholder="Breite"
+        style="background:var(--s2);color:var(--txt);border:1.5px solid var(--bdr);border-radius:var(--rs);font-size:18px;padding:13px 10px;outline:none;text-align:center;width:100%;-webkit-appearance:none">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="color:var(--mut);font-size:12px;white-space:nowrap">= m&sup2;:</span>
+      <input id="fDecke" type="number" min="0" step="any" placeholder="oder direkt m² eingeben"
+        style="flex:1;background:var(--s2);color:var(--acc);border:1.5px solid var(--acc);border-radius:var(--rs);font-size:16px;font-weight:700;padding:10px 12px;outline:none;-webkit-appearance:none">
+    </div>
+  </div>
+</div>
+
+<!-- SCHRITT 2C: FASSADE -->
+<div id="modeFassade" style="display:none">
+  <div class="sec">2. Fassadenflaechen</div>
+  <div id="fasSeiten"></div>
+  <button class="btn btn-o btn-full btn-sm" id="btnAddSeite" style="margin-bottom:10px">+ Fassadenseite hinzufuegen</button>
+  <!-- Sockelzone -->
+  <div class="div"></div>
+  <div class="tgl-hd" id="sockelTgl">
+    <span class="tgl-arr" id="sockelArr">&#9654;</span>
+    <span style="font-size:13px;font-weight:600;color:var(--mut)">Sockelzone &amp; Laibungen (Laufmeter)</span>
+  </div>
+  <div class="tgl-body" id="sockelBody">
+    <div class="row2" style="margin-bottom:10px">
+      <div class="fg"><label id="lSoH">Sockel-Hoehe (m)</label>
+        <input id="soH" type="number" min="0" step="any" placeholder="0.30"></div>
+      <div class="fg"><label>Sockel-Umfang (lfm)</label>
+        <input id="soU" type="number" min="0" step="any" placeholder="0"></div>
+    </div>
+    <div class="row3">
+      <div class="fg"><label id="lLbH">Laibung H (m)</label>
+        <input id="lbH" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label id="lLbT">Tiefe (m)</label>
+        <input id="lbT" type="number" min="0" step="any" placeholder="0"></div>
+      <div class="fg"><label>Anzahl</label>
+        <input id="lbAnz" type="number" min="0" step="1" placeholder="0"></div>
+    </div>
+    <div id="sockelVors" class="ibox" style="display:none">
+      Sockel: <strong id="svSockel">0</strong> m&sup2; &bull;
+      Laibungen: <strong id="svLaib">0</strong> m&sup2; &bull;
+      Sockel-lfm: <strong id="svLfm">0</strong> lfm
+    </div>
+  </div>
+</div>
+
+<!-- SCHRITT 3: FOTO -->
+<div class="sec">3. Raum-Foto</div>
+<div id="rFotoWrap" style="display:none" class="rfoto-wrap">
+  <img id="rFotoImg" src="" alt="">
+  <button class="rfoto-rm" id="rFotoRm">x</button>
+</div>
+<label class="rfoto-label" id="rFotoLabel">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+  Foto aufnehmen oder auswaehlen
+  <input id="rFotoInput" type="file" accept="image/*" capture="environment" style="display:none">
+</label>
+<input type="hidden" id="rFotoData">
+
+<!-- SCHRITT 4: ABZUEGE -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+  <div class="sec" style="margin:0">4. Abzuege &mdash; Oeffnungen</div>
+  <button class="btn btn-sm btn-o" id="btnAddAbz">+ Abzug</button>
+</div>
+<div class="vob-box" id="vobBox">
+  <div class="vob-rule" id="vobRule"></div>
+</div>
+<div id="abzListe"></div>
+
+<!-- SCHRITT 5: ERGEBNIS -->
+<div class="sec">5. Ergebnis nach VOB/C</div>
+<div id="resBox">
+  <div id="resGrid" class="res-grid"></div>
+  <table class="abz-tbl" id="resTbl"></table>
+  <div id="lmBox" style="display:none;margin-top:10px"></div>
+</div>
+
+<!-- SPEICHERN -->
+<div class="row2" style="gap:10px;margin-top:16px">
+  <button class="btn btn-g btn-full" id="btnCancel">Abbrechen</button>
+  <button class="btn btn-s btn-full" id="btnSave">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    Speichern
+  </button>
+</div>
+```
+
+  </div>
+</div><!-- /sF -->
+</div><!-- /app -->
+<div id="toast">
+</div>
+<script src="js/db.js"></script>
+<script src="js/main.js"></script>
+<script src="js/kunden.js"></script>
+<script src="js/projekte.js"></script>
+<script src="js/katalog.js"></script>
+<script src="js/angebot.js"></script>
+<script src="js/rechnung.js"></script>
+<script src="js/mehr.js"></script>
+<script src="js/aufmass.js"></script>
+<script src="js/boller.js"></script>
+</body>
+</html>
