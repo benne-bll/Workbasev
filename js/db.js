@@ -261,15 +261,22 @@ function icoChev(){ return "<svg width='17' height='17' viewBox='0 0 24 24' fill
 // ============================================================
 var CS = "d";
 var RENDERS = {
-d: renderDash, k: renderKunden, p: renderProjekte,
-a: renderAngebote, r: renderRechnungen,
-kat: renderKatalog, am: renderAufmass, n: renderNotizen, set: renderSettings,
-"ang-edit": renderAngEditor,
-"rech-edit": renderRechEditor,
-"zeit": renderZeiterfassung,
-"mat":  renderMaterial,
-"ger":  renderGeraete,
-"txt":  renderTextbausteine,
-"mehr": renderMehr
+  d: function(){ renderDash(); },
+  k: function(){ renderKunden(); },
+  p: function(){ renderProjekte(); },
+  a: function(){ renderAngebote(); },
+  r: function(){ renderRechnungen(); },
+  kat: function(){ renderKatalog(); },
+  am: function(){ renderAufmass(); },
+  n: function(){ renderNotizen(); },
+  set: function(){ renderSettings(); },
+  "ang-edit": function(){ renderAngEditor(); },
+  "rech-edit": function(){ renderRechEditor(); },
+  "zeit": function(){ renderZeiterfassung(); },
+  "mat": function(){ renderMaterial(); },
+  "ger": function(){ renderGeraete(); },
+  "txt": function(){ renderTextbausteine(); },
+  "mehr": function(){ renderMehr(); }
 };
+
 
