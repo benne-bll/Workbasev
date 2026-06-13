@@ -607,6 +607,7 @@ renderRechEditor();
 });
 
 // Katalog
+if(!DB.katalog().length){ DB.sKat(KDEF); }
 var ks2=el("rechKatSrch");
 if(ks2){ ks2.oninput=function(){ RECH.katSrch=this.value; rechRefreshKatalog(); }; }
 document.querySelectorAll("[data-rkatf]").forEach(function(b){
@@ -758,17 +759,64 @@ var pos=r.positionen||[]; var gruppen={}; var nr=0;
 pos.forEach(function(p){ var g=p.gruppe||"Allgemein"; if(!gruppen[g])gruppen[g]=[]; gruppen[g].push(p); });
 var rows="";
 Object.keys(gruppen).forEach(function(grp){
-rows+="<tr><td colspan='5' style='padding:6px 8px 3px;font-weight:700;font-size:11px;color:#1e3a5f;background:#f8fafc;border-top:1px solid #e2e8f0'>"+esc(grp)+"</td></tr>";
+rows+="<tr><td colspan='5' style='padding:6px 8px 3px;font-weight:700;font-size:11px;color:#0f766e;background:#f0fdfa;border-top:1px solid #ccfbf1'>"+esc(grp)+"</td></tr>";
 gruppen[grp].forEach(function(p){
 nr++;
 var gp=(parseFloat(p.menge)||0)*(parseFloat(p.ep)||0);
-rows+="<tr><td style='padding:6px 8px;color:#6b7280;font-size:11px'>"+nr+"</td>"+
+rows+="<tr style='border-bottom:1px solid #f1f5f9'>"+
+"<td style='padding:6px 8px;color:#94a3b8;font-size:11px'>"+nr+"</td>"+
 "<td style='padding:6px 8px;font-weight:600;font-size:12px'>"+esc(p.name)+"</td>"+
 "<td style='padding:6px 8px;text-align:right;font-size:11px'>"+esc(String(p.menge||1))+" "+esc(p.einh)+"</td>"+
 "<td style='padding:6px 8px;text-align:right;font-size:11px'>"+eur(p.ep||0)+"</td>"+
 "<td style='padding:6px 8px;text-align:right;font-weight:700'>"+eur(gp)+"</td></tr>";
 });
 });
+var istA=r.typ==="abschlag"||r.typ==="voraus";
+var set=DB.settings();
+return "<div style='font-family:Arial,sans-serif;font-size:12px;color:#1a1a2e;background:#fff;border-radius:12px;overflow:hidden'>"+
+// Header Boller
+"<div style='background:#0f766e;padding:18px 22px;display:flex;justify-content:space-between;align-items:flex-start'>"+
+"<div>"+
+"<div style='font-size:20px;font-weight:900;color:#fff;letter-spacing:-0.5px'>"+esc(set.firma||"Boller")+"</div>"+
+"<div style='font-size:10px;color:#99f6e4;margin-top:3px;line-height:1.7'>"+esc(set.adr||"")+(set.tel?"<br>"+esc(set.tel):"")+"</div>"+
+"</div>"+
+"<div style='text-align:right'>"+
+"<div style='font-size:13px;font-weight:700;color:#ccfbf1;text-transform:uppercase;letter-spacing:1px'>"+rechTypLbl(r.typ)+"</div>"+
+"<div style='font-size:10px;color:#99f6e4;margin-top:4px;line-height:1.8'>"+
+"Nr.: "+esc(r.nummer||"")+"<br>"+
+fdat(r.datum)+
+(r.faellig?" · Faellig: "+fdat(r.faellig):"")+"</div>"+
+"</div>"+
+"</div>"+
+// Kunde
+"<div style='background:#f0fdfa;padding:12px 22px;border-bottom:1px solid #ccfbf1'>"+
+"<div style='font-size:10px;color:#0f766e;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px'>Rechnungsempfaenger</div>"+
+"<div style='font-size:13px;font-weight:700'>"+esc(r.kundeName||"-")+"</div>"+
+(r.anschrift?"<div style='font-size:11px;color:#475569'>"+esc(r.anschrift)+"</div>":"")+
+(r.objekt?"<div style='font-size:11px;color:#0f766e;margin-top:2px'>Objekt: "+esc(r.objekt)+"</div>":"")+
+"</div>"+
+// Tabelle
+"<div style='padding:16px 22px'>"+
+"<table style='width:100%;border-collapse:collapse'>"+
+"<thead><tr style='border-bottom:2px solid #0f766e'>"+
+"<th style='padding:6px 8px;text-align:left;font-size:10px;color:#94a3b8;font-weight:600'>Pos.</th>"+
+"<th style='padding:6px 8px;text-align:left;font-size:10px;color:#94a3b8;font-weight:600'>Leistung</th>"+
+"<th style='padding:6px 8px;text-align:right;font-size:10px;color:#94a3b8;font-weight:600'>Menge</th>"+
+"<th style='padding:6px 8px;text-align:right;font-size:10px;color:#94a3b8;font-weight:600'>EP</th>"+
+"<th style='padding:6px 8px;text-align:right;font-size:10px;color:#94a3b8;font-weight:600'>Gesamt</th>"+
+"</tr></thead><tbody>"+rows+"</tbody></table>"+
+// Summen
+"<div style='margin-left:auto;width:240px;margin-top:12px;border-top:1px solid #e2e8f0;padding-top:10px'>"+
+(r.rabatt>0?"<div style='display:flex;justify-content:space-between;padding:2px 0;font-size:11px'><span>Rabatt ("+r.rabatt+"%)</span><span>-"+eur(s.rabatt)+"</span></div>":"")+
+"<div style='display:flex;justify-content:space-between;padding:3px 0;font-size:11px'><span>Netto</span><span>"+eur(s.nettoAbschlag)+"</span></div>"+
+"<div style='display:flex;justify-content:space-between;padding:3px 0;font-size:11px'><span>"+(ku?"MwSt. (§19)":m0?"0% steuerfrei":"MwSt. 19%")+"</span><span>"+eur(s.mwst)+"</span></div>"+
+"<div style='display:flex;justify-content:space-between;padding:8px 0;font-size:15px;font-weight:900;border-top:2px solid #0f766e;margin-top:4px;color:#0f766e'><span>Brutto</span><span>"+eur(s.brutto)+"</span></div>"+
+"</div>"+
+(ku?"<div style='font-size:10px;color:#0f766e;padding:8px 10px;background:#f0fdfa;border-radius:6px;margin-top:8px;border:1px solid #ccfbf1'>Gem. §19 UStG wird keine Umsatzsteuer berechnet.</div>":"")+
+"</div>"+
+"</div>";
+}
+
 var istA=r.typ==="abschlag"||r.typ==="voraus";
 return "<div style='font-family:Arial,sans-serif;font-size:12px;color:#1a1a2e;background:#fff;border-radius:12px;padding:22px'>"+
 "<h2 style='font-size:18px;font-weight:900;color:#1e3a5f;margin-bottom:4px'>"+rechTypLbl(r.typ)+"</h2>"+
