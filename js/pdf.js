@@ -552,13 +552,12 @@ ${this.renderFooter(num)}
             console.warn('Popup blockiert – bitte Popups erlauben.');
             return;
         }
-        win.document.write(html);
+        const btn = '<div style="position:fixed;top:0;left:0;right:0;background:#4a5d5e;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:999"><span style="color:#fff;font-size:13px;font-weight:600">Boller</span><button onclick="window.print()" style="background:#b36a4c;color:#fff;border:none;padding:9px 22px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">Als PDF speichern</button></div><div style="height:50px"></div>';
+        win.document.write(html.replace('<body>', '<body>' + btn));
         win.document.close();
-        setTimeout(() => {
-            win.focus();
-            // win.print(); // ← aktivieren wenn Druckdialog automatisch starten soll
-        }, 600);
+        setTimeout(() => { win.focus(); }, 300);
     }
+
 };
 
 window.PDF = PDF;
