@@ -771,85 +771,47 @@ return _bHeader('Angebot',meta)+_bAddr(s,a.kundeName,a.anschrift,a.ansprechpartn
 
 
 function angPDF(a){
-if(!a){ toast("Kein Angebot",true); return; }
-var s=DB.settings(); var sm=angSummen(a); var ku=sm.ku;
-var pos=a.positionen||[]; var gruppen={};
-pos.forEach(function(p){ var g=p.gruppe||"Allgemein"; if(!gruppen[g])gruppen[g]=[]; gruppen[g].push(p); });
-var rows=""; var nr=0;
-Object.keys(gruppen).forEach(function(grp){
-rows+="<tr><td colspan='6' style='padding:7px 8px 4px;font-weight:700;font-size:11px;background:#f8fafc;color:#1e3a5f'>"+esc(grp)+"</td></tr>";
-gruppen[grp].forEach(function(p){
-nr++;
-rows+="<tr><td style='padding:7px 8px;color:#888'>"+nr+"</td>"+
-"<td style='padding:7px 8px'><strong>"+esc(p.name)+"</strong></td>"+
-"<td style='padding:7px 8px;text-align:right'>"+esc(String(p.menge||1))+"</td>"+
-"<td style='padding:7px 8px;text-align:center;color:#888'>"+esc(p.einh)+"</td>"+
-"<td style='padding:7px 8px;text-align:right'>"+eur(p.ep||0)+"</td>"+
-"<td style='padding:7px 8px;text-align:right;font-weight:700'>"+eur((p.menge||0)*(p.ep||0))+"</td></tr>";
-});
-});
-var html="<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'>"+
-"<title>Angebot "+esc(a.nummer||"")+"</title>"+
-"<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a2e}"+
-".pg{max-width:820px;margin:0 auto;padding:32px 40px}"+
-".tb{background:#f4f4f8;padding:10px 20px;display:flex;gap:10px;margin-bottom:0}"+
-".tb button{background:#1e3a5f;color:#fff;border:none;padding:8px 20px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer}"+
-"table{width:100%;border-collapse:collapse}tr:nth-child(even){background:#f8fafc}"+
-"th{background:#1e3a5f;color:#fff;padding:9px 8px;text-align:left;font-size:11px}"+
-"@media print{.tb{display:none}}</style></head><body>"+
-"<div class='tb'><button onclick='window.print()'>Drucken / Als PDF speichern</button></div>"+
-"<div class='pg'>"+
-"<div style='display:flex;justify-content:space-between;margin-bottom:28px;padding-bottom:16px;border-bottom:3px solid #1e3a5f'>"+
-"<div><div style='font-size:26px;font-weight:900;color:#1e3a5f'>"+esc(s.firma||"Workbase")+"</div>"+
-"<div style='font-size:11px;color:#6b7280;line-height:1.8;margin-top:6px'>"+esc(s.adr||"")+"<br>"+esc(s.tel||"")+
-(s.mail?" • "+esc(s.mail):"")+
-(ku?"<br>Kleinunternehmer gem. Par.19 UStG":(s.ust?"<br>USt-IdNr.: "+esc(s.ust):""))+"</div></div>"+
-"<div style='text-align:right'>"+
-"<div style='font-size:28px;font-weight:900;color:#1e3a5f'>ANGEBOT</div>"+
-"<div style='font-size:11px;color:#6b7280;line-height:1.9;margin-top:6px'>"+
-"<strong>Nr.:</strong> "+esc(a.nummer||"")+"<br>"+
-"<strong>Datum:</strong> "+(a.datum?new Date(a.datum).toLocaleDateString("de-DE"):"-")+"<br>"+
-"<strong>Gueltig bis:</strong> "+(a.datum?new Date(new Date(a.datum).getTime()+30*864e5).toLocaleDateString("de-DE"):"-")+
-"</div></div></div>"+
-"<div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px'>"+
-"<div style='background:#f8fafc;border-radius:8px;padding:14px'>"+
-"<div style='font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin-bottom:6px'>Auftraggeber</div>"+
-"<div style='font-size:13px;font-weight:700'>"+esc(a.kundeName||"-")+"</div>"+
-"<div style='font-size:11px;color:#6b7280;line-height:1.7;margin-top:3px'>"+esc(a.anschrift||"")+"</div>"+
-(a.ansprechpartner?"<div style='font-size:11px;color:#6b7280'>Ansp.: "+esc(a.ansprechpartner)+"</div>":"")+
-"</div>"+
-"<div style='background:#f8fafc;border-radius:8px;padding:14px'>"+
-"<div style='font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin-bottom:6px'>Objekt</div>"+
-"<div style='font-size:13px;font-weight:700'>"+esc(a.objekt||"-")+"</div>"+
-"</div></div>"+
-(a.anschreiben?"<div style='margin-bottom:20px;font-size:12px;line-height:1.7;white-space:pre-wrap'>"+esc(a.anschreiben)+"</div>":"")+
-"<table style='margin-bottom:8px'><thead><tr>"+
-"<th style='width:36px'>Pos.</th><th>Leistung</th>"+
-"<th style='text-align:right;width:70px'>Menge</th>"+
-"<th style='text-align:center;width:50px'>Einh.</th>"+
-"<th style='text-align:right;width:90px'>EP netto</th>"+
-"<th style='text-align:right;width:100px'>Gesamt</th>"+
-"</tr></thead><tbody>"+rows+"</tbody></table>"+
-"<div style='margin-left:auto;width:280px;margin-top:12px;margin-bottom:16px'>"+
-(sm.rabatt>0?"<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px'><span>Zwischensumme</span><span>"+eur(sm.netto)+"</span></div>":"")+
-(sm.rabatt>0?"<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px;color:#ef4444'><span>Rabatt ("+a.rabatt+"%)</span><span>-"+eur(sm.rabatt)+"</span></div>":"")+
-"<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px'><span>Netto</span><span>"+eur(sm.nettoNachRab)+"</span></div>"+
-"<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px'><span>"+(ku?"MwSt. (Par.19)":"MwSt. 19%")+"</span><span>"+eur(sm.mwst)+"</span></div>"+
-"<div style='display:flex;justify-content:space-between;padding:9px 0;font-size:16px;font-weight:900;border-top:2px solid #1e3a5f;margin-top:3px'><span>GESAMT</span><span>"+eur(sm.brutto)+"</span></div>"+
-"</div>"+
-(ku?"<div style='font-size:10px;color:#6b7280;margin-bottom:12px'>Gem. Par.19 UStG wird keine Umsatzsteuer berechnet.</div>":"")+
-(a.skonto&&a.skontoText?"<div style='font-size:11px;color:#475569;margin-bottom:12px'>Skonto: "+esc(a.skontoText)+"</div>":"")+
-(a.anzahlung&&a.anzahlungProz?"<div style='font-size:11px;color:#475569;margin-bottom:12px'>Anzahlung: "+esc(a.anzahlungProz)+"% nach Auftragserteilung.</div>":"")+
-(a.estg?"<div style='font-size:11px;color:#475569;margin-bottom:12px'>Hinweis gem. Par.35a EStG: Handwerkerleistungen sind steuerlich absetzbar (20% der Lohnkosten, max. 1.200 EUR).</div>":"")+
-(a.schlusstext?"<div style='margin-top:16px;font-size:12px;line-height:1.7;white-space:pre-wrap'>"+esc(a.schlusstext)+"</div>":"")+
-"<div style='margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px'>"+
-"<div style='border-top:1px solid #1e3a5f;padding-top:8px'>"+(a.unterschrift?"<img src='"+a.unterschrift+"' style='max-height:55px;display:block;margin-bottom:4px'>":"<div style='height:55px'></div>")+"<span style='font-size:10px;color:#6b7280'>Ort, Datum / Unterschrift Auftragnehmer</span></div>"+
-"<div style='border-top:1px solid #1a1a2e;padding-top:6px;font-size:10px;color:#6b7280'>Ort, Datum / Unterschrift Auftraggeber</div>"+
-"</div>"+
-"</div></body></html>";
-
-openPDF(html);
+  if(!a){ toast("Kein Angebot",true); return; }
+  angSyncAll();
+  var s=DB.settings();
+  var sm=angSummen(a);
+  PDF.firma.name   = s.firma||"Boller – Oberflächen. Design. Handwerk.";
+  PDF.firma.inhaber= s.inhaber||s.firma||"Benedikt Boller";
+  PDF.firma.strasse= s.adr||"";
+  PDF.firma.tel    = s.tel||"";
+  PDF.firma.email  = s.mail||"";
+  PDF.firma.steuernr=s.ust||"";
+  PDF.firma.iban   = s.iban||"";
+  PDF.firma.bic    = s.bic||"";
+  PDF.firma.bank   = s.bank||"";
+  var raeume=[];
+  var gruppen={};
+  (a.positionen||[]).forEach(function(p){
+    var g=p.gruppe||"Allgemein";
+    if(!gruppen[g])gruppen[g]=[];
+    gruppen[g].push(p);
+  });
+  Object.keys(gruppen).forEach(function(grp){
+    var leistungen=gruppen[grp].map(function(p){ return p.name; });
+    var preis=gruppen[grp].reduce(function(s,p){
+      return s+(parseFloat(p.menge)||0)*(parseFloat(p.ep)||0);
+    },0);
+    raeume.push({name:grp, leistungen:leistungen, preis:preis});
+  });
+  PDF.createAngebot({
+    nummer:       a.nummer,
+    datum:        a.datum?new Date(a.datum).toLocaleDateString("de-DE"):PDF.heute(),
+    kunde:        a.kundeName||"",
+    adresse:      a.anschrift||"",
+    objekt:       a.objekt||"",
+    anschreiben:  a.anschreiben||"",
+    schlusstext:  a.schlusstext||"",
+    positionen:   raeume,
+    kleinunternehmer: sm.ku,
+    unterschrift: a.unterschrift||null
+  });
 }
+
 
 function angOpenSig(){
 mo("m-sig");
