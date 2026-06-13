@@ -1,4 +1,5 @@
-var RECH = { current: null, vorschauOffen: false };
+var RECH = { current: null, vorschauOffen: false, katFilter: "alle", katSrch: "" };
+
 
 // –– Rechnungsnummer generieren ––
 function genRechNr(){
